@@ -1,0 +1,21 @@
+#youtubeVideo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  z-index: 9999;
+}
+
+.closeVideo {
+  z-index: 10000;
+  position: absolute;
+  color: #ffffff;
+  top: 2px;
+  right: 6px;
+  font-size: 30px;
+}
+
+.closeVideo:hover {
+  cursor: pointer;
+  color: #1976d2;
+}

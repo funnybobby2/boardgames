@@ -1,14 +1,53 @@
 {
-  "name": "vite-starter",
+  "name": "boardgames",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev:server": "node ./server/server.js",
+    "dev:vite": "vite",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:vite\"",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@fontsource/roboto": "^5.2.6",
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "@mui/material": "^6.4.12",
+    "@reduxjs/toolkit": "^2.5.0",
+    "@types/dompurify": "^3.2.0",
+    "axios": "^1.7.9",
+    "body-parser": "^1.20.3",
+    "bootstrap": "^5.3.3",
+    "cors": "^2.8.5",
+    "dompurify": "^3.4.1",
+    "express": "^4.21.2",
+    "lazy-smart-ui-lib": "^0.12.1",
+    "react": "18.3.1",
+    "react-dom": "^18.3.1",
+    "react-redux": "^9.1.2",
+    "react-responsive-modal": "^6.4.2",
+    "react-window": "^1.8.9",
+    "zustand": "^5.0.11"
+  },
   "devDependencies": {
-    "vite": "^5.2.6"
+    "@types/react": "^18.3.14",
+    "@types/react-dom": "^18.3.2",
+    "@types/react-window": "^2.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.17.0",
+    "@typescript-eslint/parser": "^8.17.0",
+    "@vitejs/plugin-react-swc": "^3.7.2",
+    "concurrently": "^9.1.0",
+    "eslint": "^9.16.0",
+    "eslint-plugin-react-hooks": "^4.6.1",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "sass": "^1.82.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3"
   }
 }

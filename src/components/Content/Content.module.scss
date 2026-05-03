@@ -1,0 +1,9 @@
+.content {
+  width: calc(100% - 16px);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin: 8px;
+  max-height: calc(100% - 75px);
+  overflow: auto;
+}

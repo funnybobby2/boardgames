@@ -1,0 +1,117 @@
+.topbar{
+  height: 50px;
+  background: rgba(0, 0, 0, 0.3);
+  width: 100%;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  img{
+    width: 50px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+  .left{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    .neon {
+      font-family: 'Monoton', cursive;
+      font-size: 30px;
+      font-weight: 400;
+      letter-spacing: 8px;
+      color: #c6e2ff;
+      animation: neon .08s ease-in-out infinite alternate;
+
+      .flickerSlow{
+        animation: flicker 3s linear infinite;
+      }
+      
+      .flickerFast{
+        animation: flicker 1s linear infinite;
+      }
+    }
+  }
+
+  .right {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+
+    .filters{
+      margin-right: 10px;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+
+      .badge span{
+        right: 14px;
+      }
+    }
+
+    .searchInput{
+      display: block;
+      width: 100%;
+      padding: 0.2rem .75rem;
+      margin-right: 10px;
+      font-size: 1rem;
+      line-height: 1.5;
+      color: #495057;
+      background-color: #fff;
+      background-clip: padding-box;
+      border: 1px solid #ced4da;
+      border-radius: .25rem;
+      transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+      &:focus{
+        color: #495057 !important;
+        background-color: #fff !important;
+        border-color: #1670d1 !important;
+        outline: 0;
+        box-shadow: 0 0 0 0.3rem rgba(0, 123, 255, 0.25);
+      }
+    }
+  }
+
+  .disactive{
+    background-color: #3c3d41;
+    border-color: #2b2b2b !important;
+  }
+}
+
+@keyframes flicker {
+	0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+    opacity: .99;
+	}
+	20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+		opacity: 0.4;
+	}
+}
+
+@keyframes neon {
+  from {
+    text-shadow:
+    0 0 6px rgba(202,228,225,0.92),
+    0 0 30px rgba(202,228,225,0.34),
+    0 0 12px rgba(30,132,242,0.52),
+    0 0 21px rgba(30,132,242,0.92),
+    0 0 34px rgba(30,132,242,0.78),
+    0 0 54px rgba(30,132,242,0.92);
+  }
+  to {
+    text-shadow:
+    0 0 6px rgba(202,228,225,0.98),
+    0 0 30px rgba(202,228,225,0.42),
+    0 0 12px rgba(30,132,242,0.58),
+    0 0 22px rgba(30,132,242,0.84),
+    0 0 38px rgba(30,132,242,0.88),
+    0 0 60px rgba(30,132,242,1);
+  }
+}

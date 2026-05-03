@@ -1,67 +1,17 @@
-<!DOCTYPE html>
-  <html lang="en">
+<!doctype html>
+<html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jeux de société</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Monoton">
-    <link rel="stylesheet" href="css/normalize.min.css">
-    <link rel="stylesheet" href="css/animate.min.css">
-    <link rel='stylesheet' href='fontello-c47eb1fc/css/boardgame.css'>
   </head>
-
   <body>
-      <div class="topbar">
-        <div class="left">
-          <img src="assets/dice.png">
-          <div class="neon">Fun<span class="flicker-slow">n</span>y ga<span class="flicker-fast">m</span>es</div>
-        </div>
-        <div class="right">
-          <div class="filters">
-            <div class="timer">
-              <i class="icon-hourglass"></i>
-            </div>
-          </div>
-          <input class="inputField" placeholder=" Chercher ... " type="text" autoComplete="off"
-            onkeyup="searchRecipes(event)"
-          />
-          <i class="icon-search"></i>
-        </div>
-      </div>
-      <div id="container"></div>
-  
-      <!-- Modal -->
-      <a id="callMyModal" href="#animatedModal"></a>
-  
-      <div id="animatedModal">
-          <div id="btn-close-modal" class="close-animatedModal"> <i class="icon-cancel"></i> </div>
-          <div class="modal-content" id="modal-content"></div>
-      </div>
-
-    <script src="js/gameManager.js"></script>
-    <script>
-      window.onload = function() {
-          // Charger le fichier JSON
-          fetch('data.json')
-              .then(response => response.json())
-              .then(data => {
-                  // tri des données
-                  games = data.games.sort(customSort);
-                  displayGames(games);
-
-              })
-              .catch(error => console.error('Une erreur s\'est produite :', error));
-      };
-    </script>
-    <script src="js/jquery.min.js"></script>
-    <script src="js/animatedModal.js"></script>
-    <script>
-      $("#callMyModal").animatedModal({
-          animatedIn:'lightSpeedIn',
-          animatedOut:'bounceOutDown',
-          color:'#3498db'
-      });
-    </script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

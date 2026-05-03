@@ -1,0 +1,64 @@
+body, html {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+body {
+  background: #212529;
+  margin: 0;
+  flex-direction: column;
+  font-family: Roboto;
+}
+
+a {
+  display: none;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #808080;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #009EE0;
+}
+
+#root {
+  height: 100%;
+  max-height: 100%;
+}
+
+.react-responsive-modal-modal {
+  padding: 0 !important;
+  padding-bottom: 1.2rem !important;
+  background: #f6f6f6;
+  border-radius: 5px;
+}
+
+.react-responsive-modal-closeButton{
+  outline-color: transparent;
+}
+
+.react-responsive-modal-closeButton path{
+  fill: #9E9E9E;
+}
+
+.react-responsive-modal-closeButton:hover path{
+  fill: #2196F3;
+}
+
+.gold {
+  color: #e58a15;
+}
