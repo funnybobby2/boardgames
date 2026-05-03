@@ -60,7 +60,7 @@ export default function Disclaimer({ open, updateOpen, item }: DisclaimerProps) 
       await axios.post(`${import.meta.env.VITE_API_URL}/api/write-json`, updated);
       setCheck(value);
     } catch (e) {
-      console.error("Échec de la mise à jour du statut", e);
+      console.error("Échec de la mise à jour du statut joué", e);
     }
   }, [item]);
 
