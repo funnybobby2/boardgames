@@ -8,10 +8,8 @@
 }
 
 .item {
-  width: 150px;
-  height: 220px;
-  margin-right: 10px;
-  margin-bottom: 10px;
+  width: 100%;
+  aspect-ratio: 150 / 220;
   overflow: hidden;
   border-radius: 10px;
   border: 2px solid transparent;

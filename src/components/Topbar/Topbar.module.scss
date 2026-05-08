@@ -1,5 +1,6 @@
-.topbar{
-  height: 50px;
+.topbar {
+  min-height: 50px;
+  flex-shrink: 0;
   background: rgba(0, 0, 0, 0.3);
   width: 100%;
   border-radius: 5px;
@@ -7,14 +8,23 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  padding: 4px 0;
+  box-sizing: border-box;
 
-  img{
+  img {
     width: 50px;
     margin-left: 10px;
     margin-right: 10px;
+
+    @media (max-width: 480px) {
+      width: 36px;
+      margin-left: 6px;
+      margin-right: 6px;
+    }
   }
 
-  .left{
+  .left {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -28,11 +38,21 @@
       color: #c6e2ff;
       animation: neon .08s ease-in-out infinite alternate;
 
-      .flickerSlow{
+      @media (max-width: 768px) {
+        font-size: 22px;
+        letter-spacing: 4px;
+      }
+
+      @media (max-width: 480px) {
+        font-size: 15px;
+        letter-spacing: 2px;
+      }
+
+      .flickerSlow {
         animation: flicker 3s linear infinite;
       }
-      
-      .flickerFast{
+
+      .flickerFast {
         animation: flicker 1s linear infinite;
       }
     }
@@ -45,19 +65,36 @@
     justify-content: flex-end;
     align-items: center;
 
-    .filters{
+    @media (max-width: 480px) {
+      width: 100%;
+      padding: 4px 6px;
+      justify-content: space-between;
+      box-sizing: border-box;
+    }
+
+    .filters {
       margin-right: 10px;
       display: flex;
       flex-direction: row;
       justify-content: center;
       align-items: center;
 
-      .badge span{
+      .badge span {
         right: 14px;
+      }
+
+      @media (max-width: 480px) {
+        margin-right: 6px;
+
+        :global(.MuiButton-sizeLarge) {
+          padding: 5px 8px;
+          min-width: 30px;
+          font-size: 0.8rem;
+        }
       }
     }
 
-    .searchInput{
+    .searchInput {
       display: block;
       width: 100%;
       padding: 0.2rem .75rem;
@@ -70,7 +107,15 @@
       border: 1px solid #ced4da;
       border-radius: .25rem;
       transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-      &:focus{
+
+      @media (max-width: 480px) {
+        flex: 1;
+        min-width: 0;
+        font-size: 0.875rem;
+        padding: 0.15rem 0.5rem;
+      }
+
+      &:focus {
         color: #495057 !important;
         background-color: #fff !important;
         border-color: #1670d1 !important;
@@ -80,19 +125,19 @@
     }
   }
 
-  .disactive{
+  .disactive {
     background-color: #3c3d41;
     border-color: #2b2b2b !important;
   }
 }
 
 @keyframes flicker {
-	0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+  0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
     opacity: .99;
-	}
-	20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
-		opacity: 0.4;
-	}
+  }
+  20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+    opacity: 0.4;
+  }
 }
 
 @keyframes neon {
