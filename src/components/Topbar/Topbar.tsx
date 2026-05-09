@@ -6,8 +6,9 @@ import { faUserLarge, faUserGroup, faUsers, faStopwatch, faClipboardCheck, faCli
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Badge from '@mui/material/Badge';
-import { Tooltip } from "@mui/material";
+import { Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from "@mui/material";
 import { useGameStore } from "../../store/useGameStore";
+import { useAuthStore } from "../../store/useAuthStore";
 import { useShallow } from "zustand/react/shallow";
 
 export default function Topbar() {
@@ -54,6 +55,32 @@ export default function Topbar() {
     <FontAwesomeIcon icon={faSortDesc} />
   ), [isSorted]);
 
+  const { isAdmin, setAdmin } = useAuthStore();
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [loginValue, setLoginValue] = useState("");
+  const [passwordValue, setPasswordValue] = useState("");
+  const [loginError, setLoginError] = useState(false);
+
+  const handleDiceClick = useCallback(() => {
+    if (isAdmin) { setAdmin(false); return; }
+    setLoginValue("");
+    setPasswordValue("");
+    setLoginError(false);
+    setLoginOpen(true);
+  }, [isAdmin, setAdmin]);
+
+  const handleLoginSubmit = useCallback(() => {
+    if (
+      loginValue === import.meta.env.VITE_LOGIN &&
+      passwordValue === import.meta.env.VITE_PASSWORD
+    ) {
+      setAdmin(true);
+      setLoginOpen(false);
+    } else {
+      setLoginError(true);
+    }
+  }, [loginValue, passwordValue, setAdmin]);
+
   const [localQuery, setLocalQuery] = useState(query);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
@@ -72,9 +99,36 @@ export default function Topbar() {
     <div className={styles.topbar}>
 
       <div className={styles.left}>
-        <Tooltip title={`${filteredTotal}/${total}`}>
-          <img src={diceIcon} alt="logo" />
+        <Tooltip title={isAdmin ? "Déconnexion admin" : `${filteredTotal}/${total}`}>
+          <img src={diceIcon} alt="logo" onClick={handleDiceClick} style={{ cursor: "pointer" }} />
         </Tooltip>
+
+        <Dialog open={loginOpen} onClose={() => setLoginOpen(false)}>
+          <DialogTitle>Connexion admin</DialogTitle>
+          <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, pt: "16px !important" }}>
+            <TextField
+              label="Login"
+              value={loginValue}
+              onChange={e => { setLoginValue(e.target.value); setLoginError(false); }}
+              onKeyDown={e => e.key === "Enter" && handleLoginSubmit()}
+              error={loginError}
+              autoFocus
+            />
+            <TextField
+              label="Mot de passe"
+              type="password"
+              value={passwordValue}
+              onChange={e => { setPasswordValue(e.target.value); setLoginError(false); }}
+              onKeyDown={e => e.key === "Enter" && handleLoginSubmit()}
+              error={loginError}
+              helperText={loginError ? "Identifiants incorrects" : ""}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setLoginOpen(false)}>Annuler</Button>
+            <Button onClick={handleLoginSubmit} variant="contained">Connexion</Button>
+          </DialogActions>
+        </Dialog>
         <div className={styles.neon}>Fun<span className={styles.flickerSlow}>n</span>y ga<span className={styles.flickerFast}>m</span>es</div>
       </div>
 

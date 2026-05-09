@@ -4,10 +4,11 @@ import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserGroup, faStopwatch, faCakeCandles, faCheck, faVideo } from '@fortawesome/free-solid-svg-icons'
-import axios from "axios";
 import DOMPurify from "dompurify";
 import { Switch, Rate } from "lazy-smart-ui-lib";
 import { useGameStore } from "../../store/useGameStore";
+import { useGamesStore } from "../../store/useGamesStore";
+import { useAuthStore } from "../../store/useAuthStore";
 import { Game } from "../../types/Game";
 
 type DisclaimerProps = {
@@ -22,6 +23,8 @@ export default function Disclaimer({ open, updateOpen, item }: DisclaimerProps) 
   const [check, setCheck] = useState(false);
 
   const toggleVideo = useGameStore(state => state.toggleVideo);
+  const updateGame = useGamesStore(state => state.updateGame);
+  const isAdmin = useAuthStore(state => state.isAdmin);
 
   useEffect(() => {
     setRate(item?.note ?? 0);
@@ -42,27 +45,17 @@ export default function Disclaimer({ open, updateOpen, item }: DisclaimerProps) 
     [item?.resume]
   );
 
-  const changeRate = useCallback(async (value: number) => {
+  const changeRate = useCallback((value: number) => {
     if (!item) return;
-    const updated = { ...item, note: value };
-    try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/write-json`, updated);
-      setRate(value);
-    } catch (e) {
-      console.error("Échec de la mise à jour de la note", e);
-    }
-  }, [item]);
+    updateGame(item.id, { note: value });
+    setRate(value);
+  }, [item, updateGame]);
 
-  const toggleValidation = useCallback(async (value: boolean) => {
+  const toggleValidation = useCallback((value: boolean) => {
     if (!item) return;
-    const updated = { ...item, isPlayed: value };
-    try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/write-json`, updated);
-      setCheck(value);
-    } catch (e) {
-      console.error("Échec de la mise à jour du statut", e);
-    }
-  }, [item]);
+    updateGame(item.id, { isPlayed: value });
+    setCheck(value);
+  }, [item, updateGame]);
 
   return (
     <div>
@@ -84,6 +77,7 @@ export default function Disclaimer({ open, updateOpen, item }: DisclaimerProps) 
                   max={10}
                   size="large"
                   onChange={(newValue) => changeRate(newValue ?? 0)}
+                  isreadonly={!isAdmin}
                 />
               </div>
               <div dangerouslySetInnerHTML={safeResume} />
@@ -92,7 +86,7 @@ export default function Disclaimer({ open, updateOpen, item }: DisclaimerProps) 
               <div className={styles.tag}><FontAwesomeIcon icon={faStopwatch} /> {item?.duration} min</div>
               <div className={styles.tag}><FontAwesomeIcon icon={faCakeCandles} /> A partir de {item?.ageMin} ans</div>
               <div className={styles.tag}><FontAwesomeIcon icon={faUserGroup} /> {people}</div>
-              <Switch custom="validator" isSimple initialChecked={check} label={<FontAwesomeIcon icon={faCheck} />} labelPosition="left" onClick={toggleValidation} />
+              <Switch custom="validator" isSimple initialChecked={check} label={<FontAwesomeIcon icon={faCheck} />} labelPosition="left" onClick={toggleValidation} disabled={!isAdmin} />
             </div>
           </div>
         </div>

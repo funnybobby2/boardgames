@@ -2,7 +2,7 @@ import "./App.css"
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap/dist/js/bootstrap.bundle.min"
 
-import { useState, useMemo, useCallback, Suspense, lazy } from "react"
+import { useState, useMemo, useCallback, Suspense, lazy, useEffect } from "react"
 
 import Topbar from "./components/Topbar/Topbar"
 import Content from "./components/Content/Content"
@@ -11,10 +11,14 @@ import Disclaimer from "./components/Disclaimer/Disclaimer"
 import { useGameFilters } from "./hooks/useGameFilters"
 import { Game } from "./types/Game"
 import { useGameStore } from "./store/useGameStore"
+import { useGamesStore } from "./store/useGamesStore"
 
 const VideoPlayer = lazy(() => import("./components/VideoPlayer/VideoPlayer"))
 
 function App() {
+
+  const loadGames = useGamesStore(state => state.loadGames)
+  useEffect(() => { loadGames() }, [loadGames])
 
   // Filters logic
   const { filters } = useGameFilters()
