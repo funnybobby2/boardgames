@@ -12,6 +12,8 @@ import { useGameFilters } from "./hooks/useGameFilters"
 import { Game } from "./types/Game"
 import { useGameStore } from "./store/useGameStore"
 import { useGamesStore } from "./store/useGamesStore"
+import { useAuthStore } from "./store/useAuthStore"
+import { supabase } from "./lib/supabase"
 
 const VideoPlayer = lazy(() => import("./components/VideoPlayer/VideoPlayer"))
 
@@ -19,6 +21,17 @@ function App() {
 
   const loadGames = useGamesStore(state => state.loadGames)
   useEffect(() => { loadGames() }, [loadGames])
+
+  const setAdmin = useAuthStore(state => state.setAdmin)
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setAdmin(!!session)
+    })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
+      setAdmin(!!session)
+    })
+    return () => subscription.unsubscribe()
+  }, [setAdmin])
 
   // Filters logic
   const { filters } = useGameFilters()

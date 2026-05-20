@@ -9,6 +9,7 @@ import Badge from '@mui/material/Badge';
 import { Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from "@mui/material";
 import { useGameStore } from "../../store/useGameStore";
 import { useAuthStore } from "../../store/useAuthStore";
+import { supabase } from "../../lib/supabase";
 import { useShallow } from "zustand/react/shallow";
 
 export default function Topbar() {
@@ -61,23 +62,28 @@ export default function Topbar() {
   const [passwordValue, setPasswordValue] = useState("");
   const [loginError, setLoginError] = useState(false);
 
-  const handleDiceClick = useCallback(() => {
-    if (isAdmin) { setAdmin(false); return; }
+  const handleDiceClick = useCallback(async () => {
+    if (isAdmin) {
+      await supabase.auth.signOut();
+      setAdmin(false);
+      return;
+    }
     setLoginValue("");
     setPasswordValue("");
     setLoginError(false);
     setLoginOpen(true);
   }, [isAdmin, setAdmin]);
 
-  const handleLoginSubmit = useCallback(() => {
-    if (
-      loginValue === import.meta.env.VITE_LOGIN &&
-      passwordValue === import.meta.env.VITE_PASSWORD
-    ) {
+  const handleLoginSubmit = useCallback(async () => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email: loginValue,
+      password: passwordValue,
+    });
+    if (error) {
+      setLoginError(true);
+    } else {
       setAdmin(true);
       setLoginOpen(false);
-    } else {
-      setLoginError(true);
     }
   }, [loginValue, passwordValue, setAdmin]);
 
@@ -107,7 +113,7 @@ export default function Topbar() {
           <DialogTitle>Connexion admin</DialogTitle>
           <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, pt: "16px !important" }}>
             <TextField
-              label="Login"
+              label="Email"
               value={loginValue}
               onChange={e => { setLoginValue(e.target.value); setLoginError(false); }}
               onKeyDown={e => e.key === "Enter" && handleLoginSubmit()}
