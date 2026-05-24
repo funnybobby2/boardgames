@@ -8,6 +8,7 @@ type GamesStore = {
   loadGames: () => Promise<void>
   updateGame: (id: number, patch: Partial<Pick<Game, "note" | "isPlayed">>) => void
   addGame: (game: Game) => Promise<string | null>
+  editGame: (game: Game) => Promise<string | null>
 }
 
 const toGame = (row: Record<string, unknown>): Game => ({
@@ -66,6 +67,27 @@ export const useGamesStore = create<GamesStore>((set) => ({
     })
     if (error) return error.message
     set(state => ({ games: [...state.games, game] }))
+    return null
+  },
+
+  editGame: async (game) => {
+    const { error } = await supabase.from("games").update({
+      title: game.title,
+      group: game.group,
+      nb_user_min: game.nbUserMin,
+      nb_user_max: game.nbUserMax,
+      duration: game.duration,
+      age_min: game.ageMin,
+      is_played: game.isPlayed,
+      category: game.category,
+      resume: game.resume,
+      rule_video_url: game.ruleVideoUrl,
+      img: game.img,
+      note: game.note,
+      is_extension: game.isExtension,
+    }).eq("id", game.id)
+    if (error) return error.message
+    set(state => ({ games: state.games.map(g => g.id === game.id ? game : g) }))
     return null
   },
 }))

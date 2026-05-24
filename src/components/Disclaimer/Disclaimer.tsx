@@ -3,13 +3,23 @@ import styles from "./Disclaimer.module.scss"
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserGroup, faStopwatch, faCakeCandles, faCheck, faVideo } from '@fortawesome/free-solid-svg-icons'
+import { faUserGroup, faStopwatch, faCakeCandles, faCheck, faVideo, faPencil } from '@fortawesome/free-solid-svg-icons'
 import DOMPurify from "dompurify";
 import { Switch, Rate } from "lazy-smart-ui-lib";
 import { useGameStore } from "../../store/useGameStore";
 import { useGamesStore } from "../../store/useGamesStore";
 import { useAuthStore } from "../../store/useAuthStore";
 import { Game } from "../../types/Game";
+import AddGameModal from "../AddGameModal/AddGameModal";
+
+const TAG_PALETTE = [
+  { background: '#2ecc71', color: '#393939' },
+  { background: '#f39c12', color: '#393939' },
+  { background: '#e74c3c', color: '#393939' },
+  { background: '#9b59b6', color: '#393939' },
+  { background: '#22a6b3', color: '#393939' },
+  { background: '#badc58', color: '#393939' },
+]
 
 type DisclaimerProps = {
   open: boolean;
@@ -21,6 +31,7 @@ export default function Disclaimer({ open, updateOpen, item }: DisclaimerProps) 
 
   const [rate, setRate] = useState(0);
   const [check, setCheck] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
 
   const toggleVideo = useGameStore(state => state.toggleVideo);
   const updateGame = useGamesStore(state => state.updateGame);
@@ -59,13 +70,26 @@ export default function Disclaimer({ open, updateOpen, item }: DisclaimerProps) 
 
   return (
     <div>
+      <AddGameModal open={editOpen} onClose={() => setEditOpen(false)} game={item} />
       <Modal open={open} onClose={onCloseModal}>
         <h2>{item?.title}</h2>
 
         <div className={styles.card}>
           <div className={styles.picture}>
             <img src={`./assets/${item?.img}`} alt={item?.title} />
-            {item?.ruleVideoUrl !== "" && <FontAwesomeIcon icon={faVideo} onClick={toggleVideo} />}
+            <div style={{ display: "flex", gap: "12px", marginTop: "8px" }}>
+              {item?.ruleVideoUrl !== "" && <FontAwesomeIcon icon={faVideo} onClick={toggleVideo} />}
+              {isAdmin && <FontAwesomeIcon icon={faPencil} onClick={() => setEditOpen(true)} />}
+            </div>
+            {item?.category && item.category.length > 0 && (
+              <div className={styles.categories}>
+                {[...item.category].sort().map((cat, i) => (
+                  <span key={cat} className={styles.categoryTag} style={TAG_PALETTE[i % TAG_PALETTE.length]}>
+                    {cat}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
           <div className={styles.info}>
 

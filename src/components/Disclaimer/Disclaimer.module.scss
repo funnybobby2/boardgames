@@ -80,6 +80,26 @@ h2 {
     }
   }
 
+  .categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+    margin-top: $spacing-unit;
+    padding: 0 $spacing-unit;
+  }
+
+  .categoryTag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
   iframe {
     position: absolute;
   }
@@ -121,6 +141,7 @@ h2 {
       border-radius: $border-radius;
       color: $background-color;
       background-color: $primary-color;
+      font-weight: bolder;
     }
   }
 }

@@ -10,6 +10,7 @@ import { Game } from "../../types/Game"
 type Props = {
   open: boolean
   onClose: () => void
+  game?: Game
 }
 
 type FormState = Omit<Game, "category"> & { category: string[] }
@@ -31,22 +32,29 @@ const defaultForm = (id: number): FormState => ({
   isExtension: false,
 })
 
-export default function AddGameModal({ open, onClose }: Props) {
+export default function AddGameModal({ open, onClose, game }: Props) {
   const addGame = useGamesStore(state => state.addGame)
+  const editGame = useGamesStore(state => state.editGame)
   const games = useGamesStore(state => state.games)
   const nextId = games.length > 0 ? Math.max(...games.map(g => g.id)) + 1 : 1
+  const isEdit = !!game
 
   const allCategories = useMemo(() =>
     [...new Set(games.flatMap(g => g.category))].sort()
   , [games])
 
-  const [form, setForm] = useState<FormState>(() => defaultForm(nextId))
+  const [form, setForm] = useState<FormState>(() =>
+    game ? { ...game } : defaultForm(nextId)
+  )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (open) { setForm(defaultForm(nextId)); setError(null) }
-  }, [open])
+    if (open) {
+      setForm(game ? { ...game } : defaultForm(nextId))
+      setError(null)
+    }
+  }, [open, game])
 
   const set = (field: keyof FormState, value: unknown) =>
     setForm(prev => ({ ...prev, [field]: value }))
@@ -54,7 +62,7 @@ export default function AddGameModal({ open, onClose }: Props) {
   const handleSubmit = async () => {
     setLoading(true)
     setError(null)
-    const err = await addGame({ ...form })
+    const err = isEdit ? await editGame({ ...form }) : await addGame({ ...form })
     setLoading(false)
     if (err) {
       setError(err)
@@ -78,7 +86,7 @@ export default function AddGameModal({ open, onClose }: Props) {
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Ajouter un jeu</DialogTitle>
+      <DialogTitle>{isEdit ? "Modifier le jeu" : "Ajouter un jeu"}</DialogTitle>
       <DialogContent sx={{ pt: "16px !important" }}>
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
         <Grid2 container spacing={2}>
@@ -90,7 +98,8 @@ export default function AddGameModal({ open, onClose }: Props) {
               value={form.id}
               onChange={e => set("id", Number(e.target.value))}
               size="small"
-              helperText={`Prochain ID suggéré : ${nextId}`}
+              helperText={isEdit ? undefined : `Prochain ID suggéré : ${nextId}`}
+              disabled={isEdit}
             />
           </Grid2>
           <Grid2 size={12}>
@@ -158,7 +167,7 @@ export default function AddGameModal({ open, onClose }: Props) {
       <DialogActions>
         <Button onClick={onClose} disabled={loading}>Annuler</Button>
         <Button onClick={handleSubmit} variant="contained" disabled={loading || !form.title}>
-          {loading ? "Ajout..." : "Ajouter"}
+          {loading ? (isEdit ? "Enregistrement..." : "Ajout...") : (isEdit ? "Enregistrer" : "Ajouter")}
         </Button>
       </DialogActions>
     </Dialog>
