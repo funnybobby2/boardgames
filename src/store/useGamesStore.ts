@@ -7,6 +7,7 @@ type GamesStore = {
   isLoaded: boolean
   loadGames: () => Promise<void>
   updateGame: (id: number, patch: Partial<Pick<Game, "note" | "isPlayed">>) => void
+  addGame: (game: Game) => Promise<string | null>
 }
 
 const toGame = (row: Record<string, unknown>): Game => ({
@@ -44,5 +45,27 @@ export const useGamesStore = create<GamesStore>((set) => ({
     if (patch.note !== undefined) dbPatch.note = patch.note
     if (patch.isPlayed !== undefined) dbPatch.is_played = patch.isPlayed
     supabase.from("games").update(dbPatch).eq("id", id).then()
-  }
+  },
+
+  addGame: async (game) => {
+    const { error } = await supabase.from("games").insert({
+      id: game.id,
+      title: game.title,
+      group: game.group,
+      nb_user_min: game.nbUserMin,
+      nb_user_max: game.nbUserMax,
+      duration: game.duration,
+      age_min: game.ageMin,
+      is_played: game.isPlayed,
+      category: game.category,
+      resume: game.resume,
+      rule_video_url: game.ruleVideoUrl,
+      img: game.img,
+      note: game.note,
+      is_extension: game.isExtension,
+    })
+    if (error) return error.message
+    set(state => ({ games: [...state.games, game] }))
+    return null
+  },
 }))

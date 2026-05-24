@@ -2,15 +2,16 @@ import React, { useCallback, useMemo, useRef, useState, useEffect } from "react"
 import styles from "./Topbar.module.scss"
 import diceIcon from '../../assets/dice.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserLarge, faUserGroup, faUsers, faStopwatch, faClipboardCheck, faClipboardQuestion, faClipboard, faCakeCandles, faSort, faSortAsc, faSortDesc } from '@fortawesome/free-solid-svg-icons'
+import { faUserLarge, faUserGroup, faUsers, faStopwatch, faClipboardCheck, faClipboardQuestion, faClipboard, faCakeCandles, faSort, faSortAsc, faSortDesc, faPlus } from '@fortawesome/free-solid-svg-icons'
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Badge from '@mui/material/Badge';
-import { Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from "@mui/material";
+import { Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, TextField, IconButton } from "@mui/material";
 import { useGameStore } from "../../store/useGameStore";
 import { useAuthStore } from "../../store/useAuthStore";
 import { supabase } from "../../lib/supabase";
 import { useShallow } from "zustand/react/shallow";
+import AddGameModal from "../AddGameModal/AddGameModal";
 
 export default function Topbar() {
 
@@ -58,6 +59,7 @@ export default function Topbar() {
 
   const { isAdmin, setAdmin } = useAuthStore();
   const [loginOpen, setLoginOpen] = useState(false);
+  const [addOpen, setAddOpen] = useState(false);
   const [loginValue, setLoginValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
   const [loginError, setLoginError] = useState(false);
@@ -109,6 +111,8 @@ export default function Topbar() {
           <img src={diceIcon} alt="logo" onClick={handleDiceClick} style={{ cursor: "pointer" }} />
         </Tooltip>
 
+        <AddGameModal open={addOpen} onClose={() => setAddOpen(false)} />
+
         <Dialog open={loginOpen} onClose={() => setLoginOpen(false)}>
           <DialogTitle>Connexion admin</DialogTitle>
           <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, pt: "16px !important" }}>
@@ -139,6 +143,23 @@ export default function Topbar() {
       </div>
 
       <div className={styles.right}>
+
+        {isAdmin && (
+          <Tooltip title="Ajouter un jeu">
+            <IconButton
+              onClick={() => setAddOpen(true)}
+              size="small"
+              sx={{
+                backgroundColor: "primary.main",
+                color: "#fff",
+                mr: "10px",
+                "&:hover": { backgroundColor: "primary.dark" },
+              }}
+            >
+              <FontAwesomeIcon icon={faPlus} />
+            </IconButton>
+          </Tooltip>
+        )}
 
         <div className={styles.filters}>
           <ButtonGroup size="large" variant="contained" aria-label="Basic button group">
