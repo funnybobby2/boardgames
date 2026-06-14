@@ -153,6 +153,7 @@ export default function Topbar() {
                 backgroundColor: "primary.main",
                 color: "#fff",
                 mr: "10px",
+                p: "4px 6px",
                 "&:hover": { backgroundColor: "primary.dark" },
               }}
             >
