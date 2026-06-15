@@ -3,7 +3,7 @@ import styles from "./Disclaimer.module.scss"
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserGroup, faStopwatch, faCakeCandles, faCheck, faVideo, faPencil } from '@fortawesome/free-solid-svg-icons'
+import { faUserGroup, faStopwatch, faCakeCandles, faCheck, faVideo, faPencil, faDollarSign } from '@fortawesome/free-solid-svg-icons'
 import DOMPurify from "dompurify";
 import { Switch, Rate } from "lazy-smart-ui-lib";
 import { useGameStore } from "../../store/useGameStore";
@@ -31,6 +31,7 @@ export default function Disclaimer({ open, updateOpen, item }: DisclaimerProps) 
 
   const [rate, setRate] = useState(0);
   const [check, setCheck] = useState(false);
+  const [forSale, setForSale] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
 
   const toggleVideo = useGameStore(state => state.toggleVideo);
@@ -40,6 +41,7 @@ export default function Disclaimer({ open, updateOpen, item }: DisclaimerProps) 
   useEffect(() => {
     setRate(item?.note ?? 0);
     setCheck(item?.isPlayed ?? false);
+    setForSale(item?.forSale ?? false);
   }, [item]);
 
   const onCloseModal = useCallback(() => updateOpen(false), [updateOpen]);
@@ -66,6 +68,12 @@ export default function Disclaimer({ open, updateOpen, item }: DisclaimerProps) 
     if (!item) return;
     updateGame(item.id, { isPlayed: value });
     setCheck(value);
+  }, [item, updateGame]);
+
+  const toggleForSaleCallback = useCallback((value: boolean) => {
+    if (!item) return;
+    updateGame(item.id, { forSale: value });
+    setForSale(value);
   }, [item, updateGame]);
 
   return (
@@ -110,7 +118,10 @@ export default function Disclaimer({ open, updateOpen, item }: DisclaimerProps) 
               <div className={styles.tag}><FontAwesomeIcon icon={faStopwatch} /> {item?.duration} min</div>
               <div className={styles.tag}><FontAwesomeIcon icon={faCakeCandles} /> A partir de {item?.ageMin} ans</div>
               <div className={styles.tag}><FontAwesomeIcon icon={faUserGroup} /> {people}</div>
-              <Switch custom="validator" isSimple initialChecked={check} label={<FontAwesomeIcon icon={faCheck} />} labelPosition="left" onClick={toggleValidation} disabled={!isAdmin} />
+              <div className={styles.switchGroup}>
+                <Switch custom="validator" isSimple initialChecked={check} label={<FontAwesomeIcon icon={faCheck} />} labelPosition="left" onClick={toggleValidation} disabled={!isAdmin} />
+                {isAdmin && <Switch custom="validator" isSimple initialChecked={forSale} label={<FontAwesomeIcon icon={faDollarSign} />} labelPosition="left" onClick={toggleForSaleCallback} />}
+              </div>
             </div>
           </div>
         </div>

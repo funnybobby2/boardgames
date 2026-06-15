@@ -147,16 +147,23 @@ h2 {
 }
 
 :global(.validator) {
+  .label {
+    font-size: 20px !important;
+  }
+}
+
+.switchGroup {
   position: absolute;
   right: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
 
   @media (max-width: 600px) {
     position: relative;
     right: auto;
-  }
-
-  .label {
-    font-size: 20px !important;
+    flex-direction: row;
   }
 }
 

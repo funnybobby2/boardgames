@@ -7,6 +7,7 @@ type Filters = {
   ageMin?: number
   query: string
   isSorted?: boolean
+  forSale?: boolean
 }
 
 type GameStore = {
@@ -23,6 +24,7 @@ type GameStore = {
   cycleAge: () => void
   toggleSort: () => void
   setQuery: (q: string) => void
+  toggleForSale: () => void
 
   setTotal: (n: number) => void
   setFilteredTotal: (n: number) => void
@@ -40,7 +42,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     duration: undefined,
     ageMin: undefined,
     query: "",
-    isSorted: undefined
+    isSorted: undefined,
+    forSale: undefined,
   },
 
   total: 0,
@@ -119,6 +122,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
   setQuery: (query) =>
     set(state => ({
       filters: {...state.filters, query}
+    })),
+
+  toggleForSale: () =>
+    set(state => ({
+      filters: {
+        ...state.filters,
+        forSale: state.filters.forSale === undefined ? true : undefined,
+      }
     })),
 
   setTotal: (n) => set({ total: n }),

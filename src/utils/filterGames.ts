@@ -35,6 +35,10 @@ export function filterGames(games: Game[], filters: any) {
     result = result.filter(game => game.duration <= filters.duration)
   }
 
+  if (filters.forSale !== undefined) {
+    result = result.filter(game => game.forSale === filters.forSale)
+  }
+
   if (filters.isSorted !== undefined) {
     result = result.sort((a, b) => {
         if (a.note === b.note) {

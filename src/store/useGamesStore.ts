@@ -6,7 +6,7 @@ type GamesStore = {
   games: Game[]
   isLoaded: boolean
   loadGames: () => Promise<void>
-  updateGame: (id: number, patch: Partial<Pick<Game, "note" | "isPlayed">>) => void
+  updateGame: (id: number, patch: Partial<Pick<Game, "note" | "isPlayed" | "forSale">>) => void
   addGame: (game: Game) => Promise<string | null>
   editGame: (game: Game) => Promise<string | null>
 }
@@ -26,6 +26,7 @@ const toGame = (row: Record<string, unknown>): Game => ({
   img: row.img as string,
   note: row.note as number,
   isExtension: row.is_extension as boolean,
+  forSale: row.for_sale as boolean,
 })
 
 export const useGamesStore = create<GamesStore>((set) => ({
@@ -45,6 +46,7 @@ export const useGamesStore = create<GamesStore>((set) => ({
     const dbPatch: Record<string, unknown> = {}
     if (patch.note !== undefined) dbPatch.note = patch.note
     if (patch.isPlayed !== undefined) dbPatch.is_played = patch.isPlayed
+    if (patch.forSale !== undefined) dbPatch.for_sale = patch.forSale
     supabase.from("games").update(dbPatch).eq("id", id).then()
   },
 
@@ -64,6 +66,7 @@ export const useGamesStore = create<GamesStore>((set) => ({
       img: game.img,
       note: game.note,
       is_extension: game.isExtension,
+      for_sale: game.forSale,
     })
     if (error) return error.message
     set(state => ({ games: [...state.games, game] }))
@@ -85,6 +88,7 @@ export const useGamesStore = create<GamesStore>((set) => ({
       img: game.img,
       note: game.note,
       is_extension: game.isExtension,
+      for_sale: game.forSale,
     }).eq("id", game.id)
     if (error) return error.message
     set(state => ({ games: state.games.map(g => g.id === game.id ? game : g) }))

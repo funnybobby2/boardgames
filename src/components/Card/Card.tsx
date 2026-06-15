@@ -26,6 +26,7 @@ export default function Card({ item, updateGame, onSelect }: CardProps) {
           onLoad={() => setIsLoaded(true)}
           className={isLoaded ? styles.imageLoaded : styles.imageLoading}
         />
+        {item.forSale && <div className={styles.forSaleBadge}>à vendre</div>}
       </div>
     </div>
   )

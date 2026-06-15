@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useRef, useState, useEffect } from "react"
 import styles from "./Topbar.module.scss"
 import diceIcon from '../../assets/dice.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserLarge, faUserGroup, faUsers, faStopwatch, faClipboardCheck, faClipboardQuestion, faClipboard, faCakeCandles, faSort, faSortAsc, faSortDesc, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faUserLarge, faUserGroup, faUsers, faStopwatch, faClipboardCheck, faClipboardQuestion, faClipboard, faCakeCandles, faSort, faSortAsc, faSortDesc, faPlus, faDollarSign } from '@fortawesome/free-solid-svg-icons'
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Badge from '@mui/material/Badge';
@@ -25,6 +25,7 @@ export default function Topbar() {
     cycleUsers,
     setQuery,
     toggleSort,
+    toggleForSale,
   } = useGameStore(useShallow(state => ({
     filters: state.filters,
     total: state.total,
@@ -35,9 +36,10 @@ export default function Topbar() {
     cycleUsers: state.cycleUsers,
     setQuery: state.setQuery,
     toggleSort: state.toggleSort,
+    toggleForSale: state.toggleForSale,
   })));
 
-  const { ageMin, duration, isPlayed, isSorted, nbUsers, query } = filters;
+  const { ageMin, duration, isPlayed, isSorted, nbUsers, query, forSale } = filters;
 
   const nbUsersBtn = useMemo(() => (
     nbUsers === 1 ? <FontAwesomeIcon icon={faUserLarge} /> :
@@ -192,6 +194,12 @@ export default function Topbar() {
 
             <Tooltip title="Tri par note">
               <Button className={isSorted === undefined ? styles.disactive : ""} onClick={toggleSort}>{sortBtn}</Button>
+            </Tooltip>
+
+            <Tooltip title="Jeux à vendre">
+              <Button className={forSale === undefined ? styles.disactive : ""} onClick={toggleForSale}>
+                <FontAwesomeIcon icon={faDollarSign} />
+              </Button>
             </Tooltip>
           </ButtonGroup>
         </div>

@@ -13,4 +13,5 @@ export type Game = {
   img: string
   note: number
   isExtension: boolean
+  forSale: boolean
 }

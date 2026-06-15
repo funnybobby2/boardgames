@@ -28,6 +28,23 @@
   border: 2px solid #2b97e3;
 }
 
+.forSaleBadge {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #f0b100;
+  color: #212529;
+  text-align: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 3px 0;
+  border-radius: 0 0 10px 10px;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
 .played::before {
   content: url(/assets/checked.png);
   position: absolute;

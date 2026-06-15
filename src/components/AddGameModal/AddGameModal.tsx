@@ -30,6 +30,7 @@ const defaultForm = (id: number): FormState => ({
   img: "",
   note: 0,
   isExtension: false,
+  forSale: false,
 })
 
 export default function AddGameModal({ open, onClose, game }: Props) {
@@ -160,6 +161,12 @@ export default function AddGameModal({ open, onClose, game }: Props) {
             <FormControlLabel
               control={<Checkbox checked={form.isExtension} onChange={e => set("isExtension", e.target.checked)} />}
               label="Extension"
+            />
+          </Grid2>
+          <Grid2 size={3}>
+            <FormControlLabel
+              control={<Checkbox checked={form.forSale} onChange={e => set("forSale", e.target.checked)} />}
+              label="À vendre"
             />
           </Grid2>
         </Grid2>
