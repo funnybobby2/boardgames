@@ -8,6 +8,15 @@ type CardProps = {
   onSelect: () => void;
 };
 
+/** Placeholder shown while games are loading (reuses the card's shimmer animation). */
+export function CardSkeleton() {
+  return (
+    <div className={styles.itemContainer} aria-hidden="true">
+      <div className={styles.item} />
+    </div>
+  )
+}
+
 export default function Card({ item, updateGame, onSelect }: CardProps) {
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -17,7 +26,7 @@ export default function Card({ item, updateGame, onSelect }: CardProps) {
   }, [item, updateGame, onSelect]);
 
   return (
-    <div className={styles.itemContainer} onClick={selectGame}>
+    <button type="button" className={`unstyled-button ${styles.itemContainer}`} onClick={selectGame}>
       <div className={`${styles.item} ${item.isPlayed ? styles.played : ''} ${isLoaded ? styles.loaded : ''}`}>
         <img
           src={`./assets/${item.img}`}
@@ -28,6 +37,6 @@ export default function Card({ item, updateGame, onSelect }: CardProps) {
         />
         {item.forSale && <div className={styles.forSaleBadge}>à vendre</div>}
       </div>
-    </div>
+    </button>
   )
 }

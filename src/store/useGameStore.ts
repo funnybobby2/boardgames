@@ -1,14 +1,7 @@
 import { create } from "zustand"
+import { Filters, durationSteps, ageSteps, readFiltersFromUrl, writeFiltersToUrl } from "./filters"
 
-type Filters = {
-  isPlayed?: boolean
-  nbUsers: number
-  duration?: number
-  ageMin?: number
-  query: string
-  isSorted?: boolean
-  forSale?: boolean
-}
+export type { Filters }
 
 type GameStore = {
 
@@ -25,26 +18,18 @@ type GameStore = {
   toggleSort: () => void
   setQuery: (q: string) => void
   toggleForSale: () => void
+  toggleCategory: (category: string) => void
+  clearCategories: () => void
 
   setTotal: (n: number) => void
   setFilteredTotal: (n: number) => void
   toggleVideo: () => void
 }
 
-const durationSteps = [15,30,45,60,90]
-const ageSteps = [5,8,12,16]
-
 export const useGameStore = create<GameStore>((set, get) => ({
 
-  filters: {
-    isPlayed: undefined,
-    nbUsers: 4,
-    duration: undefined,
-    ageMin: undefined,
-    query: "",
-    isSorted: undefined,
-    forSale: undefined,
-  },
+  // Initial filters come from the URL so shared links and reloads keep them
+  filters: readFiltersFromUrl(),
 
   total: 0,
   filteredTotal: 0,
@@ -132,6 +117,22 @@ export const useGameStore = create<GameStore>((set, get) => ({
       }
     })),
 
+  toggleCategory: (category) =>
+    set(state => {
+      const current = state.filters.categories
+      return {
+        filters: {
+          ...state.filters,
+          categories: current.includes(category)
+            ? current.filter(c => c !== category)
+            : [...current, category],
+        }
+      }
+    }),
+
+  clearCategories: () =>
+    set(state => ({ filters: { ...state.filters, categories: [] } })),
+
   setTotal: (n) => set({ total: n }),
 
   setFilteredTotal: (n) => set({ filteredTotal: n }),
@@ -140,3 +141,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set(state => ({ isVideoPlayed: !state.isVideoPlayed }))
 
 }))
+// Keep the URL in sync with the filters
+useGameStore.subscribe((state, prev) => {
+  if (state.filters !== prev.filters) writeFiltersToUrl(state.filters)
+})

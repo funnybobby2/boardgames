@@ -18,7 +18,25 @@ $border-radius: 5px;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .11);
 }
 
-h2 {
+.closeButton {
+  position: absolute !important;
+  top: 14px;
+  right: 14px;
+  color: #9E9E9E !important;
+  font-size: 22px !important;
+
+  &:hover {
+    color: $primary-color !important;
+  }
+
+  @media (max-width: 480px) {
+    top: 6px;
+    right: 6px;
+  }
+}
+
+.modalTitle {
+  margin-top: 0;
   border-bottom: 1px solid grey;
   margin-bottom: 1rem;
   @include card-shadow;
@@ -127,6 +145,11 @@ h2 {
     background: $background-color;
     padding: $spacing-unit 15px;
     border-radius: $border-radius;
+  }
+
+  .resume {
+    overflow-y: auto;
+    height: 600px;
   }
 
   .tags {

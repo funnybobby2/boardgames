@@ -4,31 +4,30 @@ import pluginReact from "eslint-plugin-react";
 import pluginReactHooks from "eslint-plugin-react-hooks";
 import pluginReactRefresh from "eslint-plugin-react-refresh";
 
-export default [
+export default tseslint.config(
   {
-    ignores: ["dist", "eslint.config.js"],
+    ignores: ["dist"],
   },
+  ...tseslint.configs.recommended,
   {
-    files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
+    files: ["**/*.{ts,tsx}"],
     languageOptions: {
       globals: globals.browser,
       ecmaVersion: "latest",
       sourceType: "module",
-      parser: tseslint.parser,
       parserOptions: {
-        ecmaFeatures: {
-          jsx: true,
-        },
+        ecmaFeatures: { jsx: true },
       },
     },
     plugins: {
       "react-refresh": pluginReactRefresh,
       "react-hooks": pluginReactHooks,
-      "@typescript-eslint": tseslint.plugin,
       react: pluginReact,
     },
     rules: {
       ...pluginReact.configs.recommended.rules,
+      // New JSX transform: React doesn't need to be in scope
+      ...pluginReact.configs["jsx-runtime"].rules,
       ...pluginReactHooks.configs.recommended.rules,
       "react-refresh/only-export-components": [
         "warn",
@@ -36,9 +35,7 @@ export default [
       ],
     },
     settings: {
-      react: {
-        version: "detect",
-      },
+      react: { version: "detect" },
     },
   },
-];
+);

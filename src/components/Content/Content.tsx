@@ -1,12 +1,14 @@
 import React, { useMemo, useEffect, useCallback } from "react"
 import styles from "./Content.module.scss"
 
-import Card from "../Card/Card"
+import Card, { CardSkeleton } from "../Card/Card"
 
 import { filterGames } from "../../utils/filterGames"
 import { Game } from "../../types/Game"
 import { useGameStore } from "../../store/useGameStore"
 import { useGamesStore } from "../../store/useGamesStore"
+
+const SKELETON_COUNT = 24;
 
 type ContentProps = {
   updateGame: (game: Game) => void;
@@ -35,7 +37,21 @@ const Content = React.memo(function Content({ updateGame, updateOpen }: ContentP
 
   const handleSelect = useCallback(() => updateOpen(true), [updateOpen]);
 
-  if (!isLoaded) return null;
+  if (!isLoaded) {
+    return (
+      <div className={styles.content} aria-busy="true" aria-label="Chargement des jeux">
+        {Array.from({ length: SKELETON_COUNT }, (_, i) => <CardSkeleton key={i} />)}
+      </div>
+    );
+  }
+
+  if (filteredGames.length === 0) {
+    return (
+      <div className={styles.empty} role="status">
+        {games.length === 0 ? "Aucun jeu pour le moment." : "Aucun jeu ne correspond à ces filtres."}
+      </div>
+    );
+  }
 
   return (
     <div className={styles.content}>
