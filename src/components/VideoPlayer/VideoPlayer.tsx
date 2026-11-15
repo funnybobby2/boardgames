@@ -13,7 +13,9 @@ function VideoPlayer({ url, close }: VideoPlayerProps) {
 
   return (
     <>
-      <FontAwesomeIcon icon={faXmark} className={styles.closeVideo} onClick={close} />
+      <button type="button" className={`unstyled-button ${styles.closeVideo}`} onClick={close} aria-label="Fermer la vidéo" autoFocus>
+        <FontAwesomeIcon icon={faXmark} />
+      </button>
       <iframe
         id="youtubeVideo"
         width="100%"

@@ -2,12 +2,13 @@ import React, { useCallback, useMemo, useRef, useState, useEffect } from "react"
 import styles from "./Topbar.module.scss"
 import diceIcon from '../../assets/dice.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserLarge, faUserGroup, faUsers, faStopwatch, faClipboardCheck, faClipboardQuestion, faClipboard, faCakeCandles, faSort, faSortAsc, faSortDesc, faPlus, faDollarSign } from '@fortawesome/free-solid-svg-icons'
+import { faUserLarge, faUserGroup, faUsers, faStopwatch, faClipboardCheck, faClipboardQuestion, faClipboard, faCakeCandles, faSort, faSortAsc, faSortDesc, faPlus, faDollarSign, faTags } from '@fortawesome/free-solid-svg-icons'
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Badge from '@mui/material/Badge';
-import { Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, TextField, IconButton } from "@mui/material";
+import { Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, TextField, IconButton, Menu, MenuItem, Checkbox, ListItemText } from "@mui/material";
 import { useGameStore } from "../../store/useGameStore";
+import { useGamesStore } from "../../store/useGamesStore";
 import { useAuthStore } from "../../store/useAuthStore";
 import { supabase } from "../../lib/supabase";
 import { useShallow } from "zustand/react/shallow";
@@ -26,6 +27,8 @@ export default function Topbar() {
     setQuery,
     toggleSort,
     toggleForSale,
+    toggleCategory,
+    clearCategories,
   } = useGameStore(useShallow(state => ({
     filters: state.filters,
     total: state.total,
@@ -37,9 +40,20 @@ export default function Topbar() {
     setQuery: state.setQuery,
     toggleSort: state.toggleSort,
     toggleForSale: state.toggleForSale,
+    toggleCategory: state.toggleCategory,
+    clearCategories: state.clearCategories,
   })));
 
-  const { ageMin, duration, isPlayed, isSorted, nbUsers, query, forSale } = filters;
+  const { ageMin, duration, isPlayed, isSorted, nbUsers, query, forSale, categories } = filters;
+
+  // Category filter: every category present in the collection, with its game count
+  const games = useGamesStore(state => state.games);
+  const categoryCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    games.forEach(g => g.category?.forEach(c => counts.set(c, (counts.get(c) ?? 0) + 1)));
+    return [...counts.entries()].sort(([a], [b]) => a.localeCompare(b));
+  }, [games]);
+  const [categoryAnchor, setCategoryAnchor] = useState<HTMLElement | null>(null);
 
   const nbUsersBtn = useMemo(() => (
     nbUsers === 1 ? <FontAwesomeIcon icon={faUserLarge} /> :
@@ -110,7 +124,14 @@ export default function Topbar() {
 
       <div className={styles.left}>
         <Tooltip title={isAdmin ? "Déconnexion admin" : `${filteredTotal}/${total}`}>
-          <img src={diceIcon} alt="logo" onClick={handleDiceClick} style={{ cursor: "pointer" }} />
+          <button
+            type="button"
+            className="unstyled-button"
+            onClick={handleDiceClick}
+            aria-label={isAdmin ? "Déconnexion admin" : `Connexion admin (${filteredTotal} jeux affichés sur ${total})`}
+          >
+            <img src={diceIcon} alt="" />
+          </button>
         </Tooltip>
 
         <AddGameModal open={addOpen} onClose={() => setAddOpen(false)} />
@@ -165,7 +186,7 @@ export default function Topbar() {
         )}
 
         <div className={styles.filters}>
-          <ButtonGroup size="large" variant="contained" aria-label="Basic button group">
+          <ButtonGroup size="large" variant="contained" aria-label="Filtres">
             <Tooltip title="Jamais joué, déjà joué ou les 2 ?">
               <Button className={isPlayed === undefined ? styles.disactive : ""}
                 onClick={toggleIsPlayed}>{isPlayedBtn}</Button>
@@ -178,7 +199,8 @@ export default function Topbar() {
 
             <Tooltip title="Durée moyenne max">
               <Badge badgeContent={duration} color="secondary" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} className={styles.badge}>
-                <Button className={duration === undefined ? styles.disactive : ""} onClick={cycleDuration}>
+                <Button className={duration === undefined ? styles.disactive : ""} onClick={cycleDuration}
+                  aria-label={duration === undefined ? "Durée maximum : toutes" : `Durée maximum : ${duration} min`}>
                   <FontAwesomeIcon icon={faStopwatch} />
                 </Button>
               </Badge>
@@ -186,7 +208,8 @@ export default function Topbar() {
 
             <Tooltip title="Age minimum requis">
               <Badge badgeContent={ageMin} color="secondary" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} className={styles.badge}>
-                <Button className={ageMin === undefined ? styles.disactive : ""} onClick={cycleAge}>
+                <Button className={ageMin === undefined ? styles.disactive : ""} onClick={cycleAge}
+                  aria-label={ageMin === undefined ? "Âge minimum : tous" : `Âge minimum : ${ageMin} ans`}>
                   <FontAwesomeIcon icon={faCakeCandles} />
                 </Button>
               </Badge>
@@ -196,15 +219,47 @@ export default function Topbar() {
               <Button className={isSorted === undefined ? styles.disactive : ""} onClick={toggleSort}>{sortBtn}</Button>
             </Tooltip>
 
+            <Tooltip title="Catégories">
+              <Badge badgeContent={categories.length} color="secondary" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} className={styles.badge}>
+                <Button
+                  className={categories.length === 0 ? styles.disactive : ""}
+                  onClick={e => setCategoryAnchor(e.currentTarget)}
+                  aria-label={categories.length === 0 ? "Catégories : toutes" : `Catégories : ${categories.join(", ")}`}
+                  aria-haspopup="menu"
+                  aria-expanded={!!categoryAnchor}
+                >
+                  <FontAwesomeIcon icon={faTags} />
+                </Button>
+              </Badge>
+            </Tooltip>
+
             <Tooltip title="Jeux à vendre">
               <Button className={forSale === undefined ? styles.disactive : ""} onClick={toggleForSale}>
                 <FontAwesomeIcon icon={faDollarSign} />
               </Button>
             </Tooltip>
           </ButtonGroup>
+
+          <Menu
+            anchorEl={categoryAnchor}
+            open={!!categoryAnchor}
+            onClose={() => setCategoryAnchor(null)}
+            slotProps={{ paper: { sx: { maxHeight: 400 } } }}
+          >
+            <MenuItem onClick={clearCategories} disabled={categories.length === 0} dense>
+              <ListItemText primary="Toutes les catégories" />
+            </MenuItem>
+            {categoryCounts.map(([category, count]) => (
+              <MenuItem key={category} onClick={() => toggleCategory(category)} dense>
+                <Checkbox checked={categories.includes(category)} size="small" sx={{ p: 0, mr: 1 }} />
+                <ListItemText primary={category} />
+                <span className={styles.categoryCount}>{count}</span>
+              </MenuItem>
+            ))}
+          </Menu>
         </div>
 
-        <input value={localQuery} onChange={handleSearch} type="text" className={styles.searchInput} aria-label="Search" placeholder="Search" />
+        <input value={localQuery} onChange={handleSearch} type="text" className={styles.searchInput} aria-label="Rechercher un jeu" placeholder="Rechercher" />
       </div>
     </div>
   );

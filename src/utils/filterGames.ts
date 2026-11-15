@@ -1,54 +1,50 @@
 import { Game } from "../types/Game"
+import { Filters } from "../store/useGameStore"
 
-export function filterGames(games: Game[], filters: any) {
-
-  let result = [...games]
-
-  if (filters.query) {
-    result = result.filter(game =>
-      game.title.toLowerCase().includes(filters.query.toLowerCase())
-    )
+// nbUsers filter values: 1 = solo, 2 = duel, 3 = multi (3+), 4 = all
+function matchesPlayers(game: Game, nbUsers: number): boolean {
+  switch (nbUsers) {
+    case 1: return game.nbUserMin === 1
+    case 2: return game.nbUserMin <= 2 && game.nbUserMax >= 2
+    case 3: return game.nbUserMax >= 3
+    default: return true
   }
+}
 
-  if (filters.isPlayed !== undefined) {
-    result = result.filter(game => game.isPlayed === filters.isPlayed)
-  }
+/** Lowercase and strip accents so "dé" matches "De" and vice versa. */
+export const normalize = (s: string) =>
+  s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
 
-  if(filters.nbUsers) {
-    result = result.filter(g => {
-        if(filters.nbUsers === 4) return true;
-        if(filters.nbUsers === 1){
-          return g.nbUserMin === 1;
-        }
-        if(filters.nbUsers === 2){
-          return g.nbUserMin <= 2 && g.nbUserMax >= 2;
-        }
-        return g.nbUserMax >= 3;
-      });
-  }
+/** Every word of the query must appear in the title, group or one of the categories. */
+function matchesQuery(game: Game, words: string[]): boolean {
+  if (words.length === 0) return true
+  const haystack = normalize([game.title, game.group, ...(game.category ?? [])].join(" "))
+  return words.every(word => haystack.includes(word))
+}
 
-  if (filters.ageMin) {
-    result = result.filter(game => game.ageMin <= filters.ageMin)
-  }
+const byGroupThenTitle = (a: Game, b: Game) =>
+  (a.group + a.title).localeCompare(b.group + b.title)
 
-  if (filters.duration) {
-    result = result.filter(game => game.duration <= filters.duration)
-  }
+export function filterGames(games: Game[], filters: Filters): Game[] {
+  const { query, isPlayed, nbUsers, ageMin, duration, forSale, isSorted, categories } = filters
+  const words = normalize(query).split(/\s+/).filter(Boolean)
 
-  if (filters.forSale !== undefined) {
-    result = result.filter(game => game.forSale === filters.forSale)
-  }
+  // filter() returns a new array, so sorting it afterwards never mutates `games`
+  const result = games.filter(game =>
+    matchesQuery(game, words) &&
+    (isPlayed === undefined || game.isPlayed === isPlayed) &&
+    matchesPlayers(game, nbUsers) &&
+    (!ageMin || game.ageMin <= ageMin) &&
+    (!duration || game.duration <= duration) &&
+    (forSale === undefined || game.forSale === forSale) &&
+    categories.every(c => game.category?.includes(c))
+  )
 
-  if (filters.isSorted !== undefined) {
-    result = result.sort((a, b) => {
-        if (a.note === b.note) {
-          return (a.group + a.title).localeCompare(b.group + b.title)
-        }
-      return filters.isSorted ? b.note - a.note : a.note - b.note;
-    })
-  } else {
-    result = result.sort((a, b) => (a.group + a.title).localeCompare(b.group + b.title))
-  }
+  if (isSorted === undefined) return result.sort(byGroupThenTitle)
 
-  return result
+  return result.sort((a, b) =>
+    a.note === b.note
+      ? byGroupThenTitle(a, b)
+      : isSorted ? b.note - a.note : a.note - b.note
+  )
 }

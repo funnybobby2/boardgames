@@ -1,3 +1,58 @@
+/* Minimal reboot: the subset of Bootstrap's reboot this app relied on */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+  margin-top: 0;
+}
+
+h2 {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  line-height: 1.2;
+  font-size: calc(1.325rem + 0.9vw);
+}
+
+@media (min-width: 1200px) {
+  h2 {
+    font-size: 2rem;
+  }
+}
+
+p {
+  margin-bottom: 1rem;
+}
+
+img, svg {
+  vertical-align: middle;
+}
+
+input, button, select, textarea {
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* Native <button> with no visual styling: keeps keyboard/screen-reader support for clickable images & icons */
+.unstyled-button {
+  display: inline-block;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+
+.unstyled-button:focus-visible {
+  outline: 2px solid #2b97e3;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 body, html {
   position: relative;
   width: 100%;
@@ -11,7 +66,11 @@ body {
   background: #212529;
   margin: 0;
   flex-direction: column;
-  font-family: Roboto;
+  font-family: Roboto, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #212529;
+  -webkit-text-size-adjust: 100%;
 }
 
 a {
@@ -40,33 +99,6 @@ a {
   max-height: 100%;
   display: flex;
   flex-direction: column;
-}
-
-@media (max-width: 600px) {
-  .react-responsive-modal-modal {
-    width: 95vw !important;
-    max-width: 95vw !important;
-    margin: 0 auto;
-  }
-}
-
-.react-responsive-modal-modal {
-  padding: 0 !important;
-  padding-bottom: 1.2rem !important;
-  background: #f6f6f6;
-  border-radius: 5px;
-}
-
-.react-responsive-modal-closeButton{
-  outline-color: transparent;
-}
-
-.react-responsive-modal-closeButton path{
-  fill: #9E9E9E;
-}
-
-.react-responsive-modal-closeButton:hover path{
-  fill: #2196F3;
 }
 
 .gold {

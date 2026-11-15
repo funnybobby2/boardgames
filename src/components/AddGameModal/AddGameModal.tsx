@@ -13,10 +13,10 @@ type Props = {
   game?: Game
 }
 
-type FormState = Omit<Game, "category"> & { category: string[] }
+// id is only present when editing; on creation the database generates it
+type FormState = Omit<Game, "id"> & { id?: number }
 
-const defaultForm = (id: number): FormState => ({
-  id,
+const defaultForm = (): FormState => ({
   title: "",
   group: "",
   nbUserMin: 1,
@@ -26,7 +26,7 @@ const defaultForm = (id: number): FormState => ({
   isPlayed: false,
   category: [],
   resume: "",
-  ruleVideoUrl: "https://www.youtube.com/embed/",
+  ruleVideoUrl: "",
   img: "",
   note: 0,
   isExtension: false,
@@ -37,7 +37,6 @@ export default function AddGameModal({ open, onClose, game }: Props) {
   const addGame = useGamesStore(state => state.addGame)
   const editGame = useGamesStore(state => state.editGame)
   const games = useGamesStore(state => state.games)
-  const nextId = games.length > 0 ? Math.max(...games.map(g => g.id)) + 1 : 1
   const isEdit = !!game
 
   const allCategories = useMemo(() =>
@@ -45,14 +44,14 @@ export default function AddGameModal({ open, onClose, game }: Props) {
   , [games])
 
   const [form, setForm] = useState<FormState>(() =>
-    game ? { ...game } : defaultForm(nextId)
+    game ? { ...game } : defaultForm()
   )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (open) {
-      setForm(game ? { ...game } : defaultForm(nextId))
+      setForm(game ? { ...game } : defaultForm())
       setError(null)
     }
   }, [open, game])
@@ -63,7 +62,10 @@ export default function AddGameModal({ open, onClose, game }: Props) {
   const handleSubmit = async () => {
     setLoading(true)
     setError(null)
-    const err = isEdit ? await editGame({ ...form }) : await addGame({ ...form })
+    const { id, ...fields } = form
+    const err = isEdit && id !== undefined
+      ? await editGame({ ...fields, id })
+      : await addGame(fields)
     setLoading(false)
     if (err) {
       setError(err)
@@ -91,18 +93,6 @@ export default function AddGameModal({ open, onClose, game }: Props) {
       <DialogContent sx={{ pt: "16px !important" }}>
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
         <Grid2 container spacing={2}>
-          <Grid2 size={12}>
-            <TextField
-              label="ID"
-              fullWidth
-              type="number"
-              value={form.id}
-              onChange={e => set("id", Number(e.target.value))}
-              size="small"
-              helperText={isEdit ? undefined : `Prochain ID suggéré : ${nextId}`}
-              disabled={isEdit}
-            />
-          </Grid2>
           <Grid2 size={12}>
             <TextField label="Titre" fullWidth required {...txt("title")} />
           </Grid2>
@@ -137,7 +127,13 @@ export default function AddGameModal({ open, onClose, game }: Props) {
             <TextField label="Image (nom du fichier)" fullWidth placeholder="mon-jeu.jpg" {...txt("img")} />
           </Grid2>
           <Grid2 size={12}>
-            <TextField label="URL vidéo règles" fullWidth {...txt("ruleVideoUrl")} />
+            <TextField
+              label="URL vidéo règles"
+              fullWidth
+              placeholder="https://www.youtube.com/embed/XXXXXXXXXXX"
+              helperText="Laisser vide s'il n'y a pas de vidéo"
+              {...txt("ruleVideoUrl")}
+            />
           </Grid2>
           <Grid2 size={12}>
             <TextField
