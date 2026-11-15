@@ -14,13 +14,13 @@ npm run dev
 
 ## Scripts
 
-| Commande | Rôle |
-| --- | --- |
-| `npm run dev` | Serveur de développement |
-| `npm run build` | Typecheck + build de production dans `dist/` |
-| `npm run preview` | Sert le build de production en local |
-| `npm run lint` | ESLint (0 warning toléré) |
-| `npm test` | Tests unitaires (Vitest) — `npm run test:watch` en mode watch |
+| Commande                  | Rôle                                                                    |
+| ---                       | ---                                                                     |
+| `npm run dev`             | Serveur de développement                                                |
+| `npm run build`           | Typecheck + build de production dans `dist/`                            |
+| `npm run preview`         | Sert le build de production en local                                    |
+| `npm run lint`            | ESLint (0 warning toléré)                                               |
+| `npm test`                | Tests unitaires (Vitest) — `npm run test:watch` en mode watch           |
 | `npm run optimize-images` | Redimensionne/recompresse les images de `public/assets` (voir plus bas) |
 
 ## Structure
@@ -46,20 +46,20 @@ public/assets/     Images des jeux (référencées par le champ `img`)
 
 ### Table `games`
 
-| Colonne | Type | Champ TS |
-| --- | --- | --- |
-| `id` | integer, identity (généré par la base) | `id` |
-| `title` | text | `title` |
-| `group` | text | `group` (série, ex. « Exit ») |
-| `nb_user_min` / `nb_user_max` | integer | `nbUserMin` / `nbUserMax` |
-| `duration` | integer (minutes) | `duration` |
-| `age_min` | integer | `ageMin` |
-| `category` | text[] | `category` |
-| `resume` | text (HTML, nettoyé avec DOMPurify à l'affichage) | `resume` |
-| `rule_video_url` | text (URL YouTube `/embed/…`, vide si aucune) | `ruleVideoUrl` |
-| `img` | text (nom de fichier dans `public/assets`) | `img` |
-| `note` | integer (0–10) | `note` |
-| `is_played` / `is_extension` / `for_sale` | boolean | `isPlayed` / `isExtension` / `forSale` |
+| Colonne                                   | Type                                              | Champ TS                               |
+| ---                                       | ---                                               | ---                                    |
+| `id`                                      | integer, identity (généré par la base)            | `id`                                   |
+| `title`                                   | text                                              | `title`                                |
+| `group`                                   | text                                              | `group` (série, ex. « Exit »)          |
+| `nb_user_min` / `nb_user_max`             | integer                                           | `nbUserMin` / `nbUserMax`              |
+| `duration`                                | integer (minutes)                                 | `duration`                             |
+| `age_min`                                 | integer                                           | `ageMin`                               |
+| `category`                                | text[]                                            | `category`                             |
+| `resume`                                  | text (HTML, nettoyé avec DOMPurify à l'affichage) | `resume`                               |
+| `rule_video_url`                          | text (URL YouTube `/embed/…`, vide si aucune)     | `ruleVideoUrl`                         |
+| `img`                                     | text (nom de fichier dans `public/assets`)        | `img`                                  |
+| `note`                                    | integer (0–10)                                    | `note`                                 |
+| `is_played` / `is_extension` / `for_sale` | boolean                                           | `isPlayed` / `isExtension` / `forSale` |
 
 Pour ajouter une colonne : l'ajouter au type [`Game`](src/types/Game.ts) puis à `GAME_COLUMNS` dans [`gameRow.ts`](src/lib/gameRow.ts) (TypeScript signale l'oubli).
 
@@ -96,13 +96,13 @@ Les filtres sont reflétés dans l'URL pour pouvoir partager un lien ou recharge
 ?q=exit&played=0&players=2&duration=45&age=8&sort=desc&sale=1&cat=Coopératif&cat=Enquête
 ```
 
-| Paramètre | Valeurs |
-| --- | --- |
-| `q` | texte recherché (titre, série, catégories ; accents ignorés) |
-| `played` | `1` déjà joué, `0` jamais joué |
-| `players` | `1` solo, `2` duel, `3` multi |
-| `duration` | durée max : `15`, `30`, `45`, `60`, `90` |
-| `age` | âge min : `5`, `8`, `12`, `16` |
-| `sort` | `desc` meilleures notes d'abord, `asc` l'inverse |
-| `sale` | `1` jeux à vendre |
-| `cat` | catégorie (répétable : le jeu doit les avoir toutes) |
+| Paramètre  | Valeurs                                                      |
+| ---        | ---                                                          |
+| `q`        | texte recherché (titre, série, catégories ; accents ignorés) |
+| `played`   | `1` déjà joué, `0` jamais joué                               |
+| `players`  | `1` solo, `2` duel, `3` multi                                |
+| `duration` | durée max : `15`, `30`, `45`, `60`, `90`                     |
+| `age`      | âge min : `5`, `8`, `12`, `16`                               |
+| `sort`     | `desc` meilleures notes d'abord, `asc` l'inverse             |
+| `sale`     | `1` jeux à vendre                                            |
+| `cat`      | catégorie (répétable : le jeu doit les avoir toutes)         |
