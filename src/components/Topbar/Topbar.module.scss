@@ -12,6 +12,32 @@
   padding: 4px 0;
   box-sizing: border-box;
 
+  .actionbutton {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-family: 'Pacifico', cursive;
+    text-decoration: none;
+    background-color: #1976d2;
+    border: none;
+    border-bottom: 3px solid #175e8d;
+    text-shadow: 0px -2px #175e8d;
+    transition: all 0.1s;
+    -webkit-transition: all 0.1s;
+    color: white;
+    white-space: nowrap;
+    margin-right: 10px;
+  }
+
+  .actionbutton:active {
+    transform: translate(0px,5px);
+    -webkit-transform: translate(0px,5px);
+    border-bottom: 1px solid #175e8d;
+  }
+
+  .actionbutton:hover {
+    cursor: pointer;
+  }
+
   img {
     width: 50px;
     margin-left: 10px;

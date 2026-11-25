@@ -2,11 +2,11 @@ import React, { useCallback, useMemo, useRef, useState, useEffect } from "react"
 import styles from "./Topbar.module.scss"
 import diceIcon from '../../assets/dice.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserLarge, faUserGroup, faUsers, faStopwatch, faClipboardCheck, faClipboardQuestion, faClipboard, faCakeCandles, faSort, faSortAsc, faSortDesc, faPlus, faDollarSign, faTags } from '@fortawesome/free-solid-svg-icons'
+import { faUserLarge, faUserGroup, faUsers, faStopwatch, faClipboardCheck, faClipboardQuestion, faClipboard, faCakeCandles, faSort, faSortAsc, faSortDesc, faDollarSign, faTags } from '@fortawesome/free-solid-svg-icons'
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Badge from '@mui/material/Badge';
-import { Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, TextField, IconButton, Menu, MenuItem, Checkbox, ListItemText } from "@mui/material";
+import { Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Menu, MenuItem, Checkbox, ListItemText } from "@mui/material";
 import { useGameStore } from "../../store/useGameStore";
 import { useGamesStore } from "../../store/useGamesStore";
 import { useAuthStore } from "../../store/useAuthStore";
@@ -169,19 +169,7 @@ export default function Topbar() {
 
         {isAdmin && (
           <Tooltip title="Ajouter un jeu">
-            <IconButton
-              onClick={() => setAddOpen(true)}
-              size="small"
-              sx={{
-                backgroundColor: "primary.main",
-                color: "#fff",
-                mr: "10px",
-                p: "4px 6px",
-                "&:hover": { backgroundColor: "primary.dark" },
-              }}
-            >
-              <FontAwesomeIcon icon={faPlus} />
-            </IconButton>
+            <button className={styles.actionbutton} onClick={() => setAddOpen(true)}>New game</button>
           </Tooltip>
         )}
 
